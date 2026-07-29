@@ -37,13 +37,39 @@ cherchées sur Wikipédia (fr, puis en) à partir du mot, puis mises en cache à
 niveaux — l'URL dans `localStorage`, le fichier dans le service worker. Une fois un
 mot vu, son image reste donc disponible hors-ligne.
 
-Conséquences à connaître :
+Pour les thèmes livrés avec l'app, les URLs sont **déjà écrites en dur** dans
+`wordPacks.ts` (champ `images`) : aucune recherche au lancement, affichage immédiat.
+La recherche automatique ne sert qu'aux thèmes perso.
 
-- La **première** partie sur un thème donné a besoin d'une connexion. Sans réseau,
-  l'app fonctionne normalement, simplement sans image.
-- La recherche automatique vise la page Wikipédia qui porte le nom du mot. Pour un
-  personnage dont la page est celle de l'œuvre (« Naruto », « Sailor Moon »), on
-  obtient le logo de la série plutôt qu'un portrait.
+### Couverture des thèmes intégrés
+
+| Thème | Mots illustrés |
+|---|---|
+| Classique | 20/20 |
+| Chanteurs | 19/19 |
+| Footballeurs | 18/18 |
+| Sportifs | 20/20 |
+| Perso d'animé | 6/20 |
+| Films & Séries | 10/20 |
+
+Les personnages de fiction sont mal couverts parce que **l'API Wikipédia exclut
+délibérément les images non libres** : il n'existe donc pas de portrait de Naruto ou
+de Walter White accessible par ce biais, seulement des logos de licence, des photos
+de cosplay ou des figurines.
+
+Deux règles appliquées à la génération, pour ne pas dégrader le jeu :
+
+1. **Symétrie par paire** — les deux mots d'une paire ont une image, ou aucun des
+   deux. Comme un joueur ignore son propre rôle, être le seul sans image serait un
+   indice.
+2. **Jamais d'image trompeuse** — les résultats qui pointaient sur un autre sujet ont
+   été écartés (« Walter White » renvoyait le portrait de Walter Francis White, un
+   militant des droits civiques bien réel ; « Saitama » la ville japonaise ; « L » la
+   lettre de l'alphabet).
+
+Conséquence : les 12 paires de fiction non couvertes s'affichent sans image. Pour les
+compléter, il faut une source dédiée aux œuvres de fiction (TMDB pour les films et
+séries, MyAnimeList pour les animés) ou des URLs saisies à la main.
 
 Pour corriger un mot mal illustré dans un thème perso : onglet **Thèmes** → modifier
 le thème → section **Images** → coller une URL d'image. Elle est enregistrée avec le
