@@ -1,0 +1,97 @@
+# Undercover — PWA
+
+Jeu de déduction sociale inspiré de l'app officielle Undercover, en **pass-and-play**
+(un seul téléphone qu'on se passe), 100 % hors-ligne, installable comme une app.
+
+## Lancer le projet
+
+```bash
+npm install
+npm run dev
+```
+
+Build de production (génère le service worker et le manifest PWA) :
+
+```bash
+npm run build && npm run preview
+```
+
+## Règles implémentées
+
+- **Civils** : reçoivent tous le même mot.
+- **Undercover** : reçoivent un mot proche mais différent.
+- **Mr. White** (optionnel) : ne reçoit aucun mot, doit bluffer. S'il est éliminé,
+  il a une dernière chance de deviner le mot des civils — s'il trouve, il gagne
+  immédiatement (comparaison insensible à la casse et aux accents).
+- **Victoire des civils** : tous les Undercover et Mr. White sont éliminés.
+- **Victoire des infiltrés** : leur nombre devient supérieur ou égal à celui des civils.
+
+Options réglables : nombre d'Undercover (borné à la moitié des joueurs), activation
+de Mr. White, sélection multiple de thèmes (3 à 20 joueurs).
+
+## Ajouter tes propres thèmes
+
+### Depuis l'app (le plus simple)
+
+L'onglet **📚 Thèmes** en bas de l'écran permet de créer, modifier et supprimer des
+catégories sans toucher au code. Les thèmes créés sont enregistrés dans le navigateur
+(`localStorage`) et apparaissent aussitôt dans la grille de l'écran de jeu.
+
+Pour injecter beaucoup de mots d'un coup, utilise le bouton **📋 Importer en masse** :
+colle une paire par ligne, les deux mots séparés par `/`, `,`, `;` ou `|`.
+
+```
+Mario / Luigi
+Link ; Zelda
+Sonic , Tails
+Kratos | Ares
+```
+
+Les lignes qui ne contiennent pas deux mots sont ignorées silencieusement.
+
+> Le stockage est local au navigateur : vider les données du site efface les thèmes
+> perso. Pour des thèmes permanents livrés avec l'app, passe par le fichier ci-dessous.
+
+### Dans le code (thèmes livrés avec l'app)
+
+Tout se passe dans [`src/data/wordPacks.ts`](src/data/wordPacks.ts). Un thème suit ce format :
+
+```ts
+{
+  id: 'anime',              // identifiant unique, en kebab-case
+  label: 'Perso d’animé',   // libellé affiché sur le bouton
+  emoji: '🍥',              // icône affichée à côté du libellé
+  pairs: [
+    ['Naruto', 'Sasuke'],   // [mot des civils, mot des undercover]
+    ['Goku', 'Vegeta'],
+  ],
+}
+```
+
+Points importants pour de bonnes paires :
+
+- Les deux mots doivent être **proches mais distinguables** — assez similaires pour
+  que l'undercover puisse bluffer, assez différents pour être démasqué.
+- L'ordre dans la paire n'a pas d'importance : à chaque manche, le jeu tire au sort
+  lequel des deux revient aux civils.
+- Vise au moins une dizaine de paires par thème pour éviter les répétitions.
+
+Les thèmes actuels (`classique`, `anime`, `films-series`, `chanteurs`,
+`footballeurs`, `sportifs`) contiennent des données d'exemple à remplacer par tes
+propres listes. Ajouter un thème au tableau `wordPacks` suffit : il apparaît
+automatiquement dans l'écran de configuration.
+
+## Structure
+
+```
+src/
+├── App.tsx                 # routeur d'écrans + onglets Jouer/Thèmes
+├── types.ts                # types du domaine (Player, Phase, WordPack…)
+├── data/
+│   ├── wordPacks.ts        # ← les thèmes livrés avec l'app
+│   └── customPacks.ts      # thèmes perso : stockage local + import en masse
+├── game/
+│   ├── logic.ts            # tirage des mots, attribution des rôles, victoire
+│   └── reducer.ts          # machine à états de la partie
+└── components/             # un composant par écran
+```
