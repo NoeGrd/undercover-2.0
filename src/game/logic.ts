@@ -13,16 +13,17 @@ export function shuffle<T>(arr: T[]): T[] {
 export function pickWordPair(
   themeIds: string[],
   allPacks: WordPack[],
-): { civil: string; undercover: string; themeLabel: string } {
+): { civil: string; undercover: string; themeLabel: string; themeImages: Record<string, string> } {
   const selected = allPacks.filter((p) => themeIds.includes(p.id) && p.pairs.length > 0)
   // filet de sécurité : si la sélection est vide (thème supprimé, données corrompues),
   // on retombe sur les thèmes intégrés plutôt que de planter.
   const pool = selected.length > 0 ? selected : wordPacks
   const chosenPack = pool[Math.floor(Math.random() * pool.length)]
   const [a, b] = chosenPack.pairs[Math.floor(Math.random() * chosenPack.pairs.length)]
+  const common = { themeLabel: chosenPack.label, themeImages: chosenPack.images ?? {} }
   return Math.random() < 0.5
-    ? { civil: a, undercover: b, themeLabel: chosenPack.label }
-    : { civil: b, undercover: a, themeLabel: chosenPack.label }
+    ? { civil: a, undercover: b, ...common }
+    : { civil: b, undercover: a, ...common }
 }
 
 export function assignRoles(names: string[], settings: GameSettings, civilWord: string, undercoverWord: string): Player[] {
@@ -74,7 +75,7 @@ export function maxUndercoverFor(playerCount: number): number {
 export function initialState(): GameState {
   return {
     phase: 'setup',
-    settings: { themeIds: ['classique'], undercoverCount: 1, includeMrWhite: false },
+    settings: { themeIds: ['classique'], undercoverCount: 1, includeMrWhite: false, showImages: true },
     playerNames: ['', '', ''],
     players: [],
     turnOrder: [],
@@ -83,6 +84,7 @@ export function initialState(): GameState {
     civilWord: '',
     undercoverWord: '',
     themeLabel: '',
+    themeImages: {},
     lastElimination: null,
     winner: null,
     votedOutId: null,

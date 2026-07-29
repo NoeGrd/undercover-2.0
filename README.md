@@ -27,7 +27,28 @@ npm run build && npm run preview
 - **Victoire des infiltrés** : leur nombre devient supérieur ou égal à celui des civils.
 
 Options réglables : nombre d'Undercover (borné à la moitié des joueurs), activation
-de Mr. White, sélection multiple de thèmes (3 à 20 joueurs).
+de Mr. White, affichage des images, sélection multiple de thèmes (3 à 20 joueurs).
+
+## Images des mots
+
+Chaque mot est illustré au moment de la révélation, pour reconnaître un personnage
+qu'on ne connaît pas. Les images **ne sont pas embarquées dans l'app** : elles sont
+cherchées sur Wikipédia (fr, puis en) à partir du mot, puis mises en cache à deux
+niveaux — l'URL dans `localStorage`, le fichier dans le service worker. Une fois un
+mot vu, son image reste donc disponible hors-ligne.
+
+Conséquences à connaître :
+
+- La **première** partie sur un thème donné a besoin d'une connexion. Sans réseau,
+  l'app fonctionne normalement, simplement sans image.
+- La recherche automatique vise la page Wikipédia qui porte le nom du mot. Pour un
+  personnage dont la page est celle de l'œuvre (« Naruto », « Sailor Moon »), on
+  obtient le logo de la série plutôt qu'un portrait.
+
+Pour corriger un mot mal illustré dans un thème perso : onglet **Thèmes** → modifier
+le thème → section **Images** → coller une URL d'image. Elle est enregistrée avec le
+thème et remplace la recherche automatique. Le bouton **Images** dans les options
+désactive complètement l'affichage.
 
 ## Ajouter tes propres thèmes
 
@@ -92,6 +113,7 @@ src/
 │   └── customPacks.ts      # thèmes perso : stockage local + import en masse
 ├── game/
 │   ├── logic.ts            # tirage des mots, attribution des rôles, victoire
-│   └── reducer.ts          # machine à états de la partie
+│   ├── reducer.ts          # machine à états de la partie
+│   └── wordImages.ts       # recherche Wikipédia + cache des images
 └── components/             # un composant par écran
 ```

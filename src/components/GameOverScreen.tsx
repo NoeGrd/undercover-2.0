@@ -1,4 +1,5 @@
 import type { Player, Winner } from '../types'
+import WordImage from './WordImage'
 
 interface Props {
   winner: Winner | null
@@ -6,6 +7,8 @@ interface Props {
   civilWord: string
   undercoverWord: string
   themeLabel: string
+  showImages: boolean
+  themeImages: Record<string, string>
   onReplaySamePlayers: () => void
   onNewGame: () => void
 }
@@ -28,6 +31,8 @@ export default function GameOverScreen({
   civilWord,
   undercoverWord,
   themeLabel,
+  showImages,
+  themeImages,
   onReplaySamePlayers,
   onNewGame,
 }: Props) {
@@ -39,9 +44,19 @@ export default function GameOverScreen({
         <div className="emoji">{copy.emoji}</div>
         <h1 style={{ marginTop: 10 }}>{copy.title}</h1>
         <p style={{ marginTop: 10 }}>Thème : {themeLabel}</p>
-        <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 14, flexWrap: 'wrap' }}>
-          <span className="word-pill">🟢 {civilWord}</span>
-          <span className="word-pill">🔴 {undercoverWord}</span>
+        <div className="word-reveal-grid">
+          <div className="word-reveal">
+            {showImages && (
+              <WordImage word={civilWord} override={themeImages[civilWord]} height={110} />
+            )}
+            <span className="word-pill">🟢 {civilWord}</span>
+          </div>
+          <div className="word-reveal">
+            {showImages && (
+              <WordImage word={undercoverWord} override={themeImages[undercoverWord]} height={110} />
+            )}
+            <span className="word-pill">🔴 {undercoverWord}</span>
+          </div>
         </div>
       </div>
 

@@ -127,12 +127,25 @@ export default function SetupScreen({
             </button>
           </div>
         </div>
-        <div className="row">
+        <div className="row" style={{ marginBottom: 12 }}>
           <span>Mr. White</span>
           <button
             className={`switch ${settings.includeMrWhite ? 'on' : ''}`}
             onClick={() => onSettingsChange({ includeMrWhite: !settings.includeMrWhite })}
             aria-label="Activer Mr. White"
+          />
+        </div>
+        <div className="row">
+          <span>
+            Images
+            <span style={{ display: 'block', fontSize: 12, color: 'var(--text-dim)' }}>
+              Illustre le mot pour les persos qu'on ne connaît pas
+            </span>
+          </span>
+          <button
+            className={`switch ${settings.showImages ? 'on' : ''}`}
+            onClick={() => onSettingsChange({ showImages: !settings.showImages })}
+            aria-label="Afficher les images"
           />
         </div>
       </div>

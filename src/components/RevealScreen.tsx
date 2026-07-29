@@ -1,16 +1,33 @@
 import { useState } from 'react'
 import type { Player } from '../types'
+import { useWordImage } from './WordImage'
 
 interface Props {
   players: Player[]
   revealIndex: number
+  showImages: boolean
+  themeImages: Record<string, string>
   onNext: () => void
 }
 
-export default function RevealScreen({ players, revealIndex, onNext }: Props) {
+export default function RevealScreen({
+  players,
+  revealIndex,
+  showImages,
+  themeImages,
+  onNext,
+}: Props) {
   const [showing, setShowing] = useState(false)
   const [hasPeeked, setHasPeeked] = useState(false)
   const player = players[revealIndex]
+
+  // chargée dès l'affichage de l'écran pour qu'elle soit prête au moment du hold
+  const word = player?.word ?? null
+  const { url: imageUrl } = useWordImage(
+    showImages ? word : null,
+    word ? themeImages[word] : undefined,
+  )
+
   if (!player) return null
 
   const isMrWhite = player.role === 'mrwhite'
@@ -59,6 +76,9 @@ export default function RevealScreen({ players, revealIndex, onNext }: Props) {
                 Ton mot est
               </div>
               <div className="reveal-word">{player.word}</div>
+              {showImages && imageUrl && (
+                <img className="reveal-image" src={imageUrl} alt={player.word ?? ''} />
+              )}
             </div>
           )
         ) : (

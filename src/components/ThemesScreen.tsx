@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { WordPack } from '../types'
 import { wordPacks } from '../data/wordPacks'
 import { newPackId, parseBulkPairs } from '../data/customPacks'
+import WordImage from './WordImage'
 
 interface Props {
   customPacks: WordPack[]
@@ -116,9 +117,12 @@ function PackEditor({ pack, onSave, onCancel }: EditorProps) {
   )
   const [bulkOpen, setBulkOpen] = useState(false)
   const [bulkText, setBulkText] = useState('')
+  const [imagesOpen, setImagesOpen] = useState(false)
+  const [images, setImages] = useState<Record<string, string>>(pack.images ?? {})
 
   const validPairs = pairs.filter(([a, b]) => a.trim() && b.trim())
   const canSave = label.trim().length > 0 && validPairs.length > 0
+  const distinctWords = [...new Set(validPairs.flat().map((w) => w.trim()))]
 
   function updatePair(index: number, side: 0 | 1, value: string) {
     setPairs(pairs.map((p, i) => (i === index ? (side === 0 ? [value, p[1]] : [p[0], value]) : p)))
@@ -244,13 +248,62 @@ function PackEditor({ pack, onSave, onCancel }: EditorProps) {
         )}
       </div>
 
+      {distinctWords.length > 0 && (
+        <div className="card">
+          <div className="row" style={{ marginBottom: 14 }}>
+            <h2>Images</h2>
+            <button className="icon-btn" onClick={() => setImagesOpen(!imagesOpen)}>
+              {imagesOpen ? 'Masquer' : 'Afficher'}
+            </button>
+          </div>
+          <p style={{ fontSize: 13 }}>
+            Les images sont cherchées automatiquement sur Wikipédia. Colle une URL ici seulement
+            pour corriger un mot mal illustré.
+          </p>
+
+          {imagesOpen && (
+            <div className="player-list" style={{ marginTop: 14 }}>
+              {distinctWords.map((word) => (
+                <div className="image-row" key={word}>
+                  <WordImage word={word} override={images[word]} height={54} className="image-thumb" />
+                  <div className="image-row-fields">
+                    <span className="image-row-word">{word}</span>
+                    <input
+                      type="text"
+                      placeholder="URL d'image (optionnel)"
+                      value={images[word] ?? ''}
+                      onChange={(e) => {
+                        const next = { ...images }
+                        if (e.target.value.trim()) next[word] = e.target.value.trim()
+                        else delete next[word]
+                        setImages(next)
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="spacer" />
       <button
         className="btn btn-primary btn-block"
         disabled={!canSave}
-        onClick={() =>
-          onSave({ id: pack.id, label: label.trim(), emoji, pairs: validPairs, custom: true })
-        }
+        onClick={() => {
+          // on ne garde que les overrides des mots encore présents
+          const kept: Record<string, string> = {}
+          for (const w of distinctWords) if (images[w]) kept[w] = images[w]
+          onSave({
+            id: pack.id,
+            label: label.trim(),
+            emoji,
+            pairs: validPairs,
+            custom: true,
+            images: kept,
+          })
+        }}
       >
         {canSave ? `Enregistrer (${validPairs.length} paires)` : 'Nom et 1 paire minimum'}
       </button>

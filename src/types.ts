@@ -27,12 +27,16 @@ export interface WordPack {
   pairs: [string, string][]
   /** true pour les thèmes créés par l'utilisateur (modifiables et supprimables) */
   custom?: boolean
+  /** URLs d'images forcées manuellement, par mot (sinon recherche automatique) */
+  images?: Record<string, string>
 }
 
 export interface GameSettings {
   themeIds: string[]
   undercoverCount: number
   includeMrWhite: boolean
+  /** affiche une image illustrant le mot lors de la révélation */
+  showImages: boolean
 }
 
 export interface EliminationResult {
@@ -51,6 +55,8 @@ export interface GameState {
   civilWord: string
   undercoverWord: string
   themeLabel: string
+  /** images forcées du thème tiré, par mot */
+  themeImages: Record<string, string>
   lastElimination: EliminationResult | null
   winner: Winner | null
   votedOutId: string | null

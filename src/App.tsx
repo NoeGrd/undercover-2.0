@@ -86,6 +86,8 @@ export default function App() {
           key={state.revealIndex}
           players={state.players}
           revealIndex={state.revealIndex}
+          showImages={state.settings.showImages}
+          themeImages={state.themeImages}
           onNext={() => dispatch({ type: 'REVEAL_NEXT' })}
         />
       )
@@ -130,6 +132,8 @@ export default function App() {
           civilWord={state.civilWord}
           undercoverWord={state.undercoverWord}
           themeLabel={state.themeLabel}
+          showImages={state.settings.showImages}
+          themeImages={state.themeImages}
           onReplaySamePlayers={() => dispatch({ type: 'REPLAY_SAME_PLAYERS', packs: allPacks })}
           onNewGame={() => dispatch({ type: 'RESET' })}
         />

@@ -151,6 +151,50 @@ body {
   flex-shrink: 0;
 }
 
+.image-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.image-thumb {
+  width: 54px;
+  min-width: 54px;
+  margin: 0;
+  border-radius: 10px;
+}
+
+.image-row-fields {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.image-row-word {
+  font-size: 13px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.image-row-fields input {
+  background: var(--bg-card);
+  border: none;
+  border-radius: 10px;
+  padding: 9px 10px;
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  min-width: 0;
+}
+
+.image-row-fields input:focus {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
 .bulk-textarea {
   width: 100%;
   background: var(--bg-card);
@@ -436,6 +480,62 @@ p {
   font-size: 15px;
   color: var(--text-dim);
   font-weight: 600;
+}
+
+.word-image {
+  display: block;
+  width: 100%;
+  max-width: 260px;
+  margin: 14px auto 0;
+  border-radius: 16px;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.05);
+  animation: fadein 0.25s ease;
+}
+
+.word-image--loading {
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.reveal-image {
+  max-height: 210px;
+  margin-top: 16px;
+}
+
+.word-reveal-grid {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 14px;
+}
+
+.word-reveal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.word-reveal .word-image {
+  margin: 0;
+  width: 100%;
+}
+
+.word-reveal .word-pill {
+  font-size: 14px;
+  max-width: 100%;
 }
 
 .player-list {

@@ -26,6 +26,28 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
+        runtimeCaching: [
+          {
+            // fichiers image : une fois vus, ils restent disponibles hors-ligne
+            urlPattern: /^https:\/\/upload\.wikimedia\.org\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'wikimedia-images',
+              expiration: { maxEntries: 600, maxAgeSeconds: 60 * 60 * 24 * 180 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          {
+            // réponses de l'API Wikipédia (recherche de la miniature)
+            urlPattern: /^https:\/\/[a-z]{2}\.wikipedia\.org\/(api|w)\/.*/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'wikipedia-api',
+              expiration: { maxEntries: 400, maxAgeSeconds: 60 * 60 * 24 * 180 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+        ],
       },
     }),
   ],

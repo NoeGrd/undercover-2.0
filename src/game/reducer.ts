@@ -25,7 +25,10 @@ export function reducer(state: GameState, action: Action): GameState {
 
     case 'START_GAME': {
       const names = state.playerNames.map((n) => n.trim()).filter(Boolean)
-      const { civil, undercover, themeLabel } = pickWordPair(state.settings.themeIds, action.packs)
+      const { civil, undercover, themeLabel, themeImages } = pickWordPair(
+        state.settings.themeIds,
+        action.packs,
+      )
       const players = assignRoles(names, state.settings, civil, undercover)
       return {
         ...state,
@@ -34,6 +37,7 @@ export function reducer(state: GameState, action: Action): GameState {
         civilWord: civil,
         undercoverWord: undercover,
         themeLabel,
+        themeImages,
         phase: 'reveal',
         revealIndex: 0,
         roundNumber: 1,
@@ -113,7 +117,10 @@ export function reducer(state: GameState, action: Action): GameState {
 
     case 'REPLAY_SAME_PLAYERS': {
       const names = state.players.map((p) => p.name)
-      const { civil, undercover, themeLabel } = pickWordPair(state.settings.themeIds, action.packs)
+      const { civil, undercover, themeLabel, themeImages } = pickWordPair(
+        state.settings.themeIds,
+        action.packs,
+      )
       const players = assignRoles(names, state.settings, civil, undercover)
       return {
         ...state,
@@ -122,6 +129,7 @@ export function reducer(state: GameState, action: Action): GameState {
         civilWord: civil,
         undercoverWord: undercover,
         themeLabel,
+        themeImages,
         phase: 'reveal',
         revealIndex: 0,
         roundNumber: 1,
