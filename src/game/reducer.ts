@@ -1,5 +1,17 @@
 import type { GameSettings, GameState, WordPack } from '../types'
-import { assignRoles, avoidMrWhiteFirst, checkWinner, initialState, pickWordPair } from './logic'
+import {
+  assignRoles,
+  avoidMrWhiteFirst,
+  checkWinner,
+  initialState,
+  pickWordPair,
+  shuffle,
+} from './logic'
+
+/** Ordre de passage : tirage indépendant de l'ordre de révélation des mots. */
+function makeTurnOrder(ids: string[], players: GameState['players']): string[] {
+  return avoidMrWhiteFirst(shuffle(ids), players)
+}
 
 export type Action =
   | { type: 'SET_PLAYER_NAMES'; names: string[] }
@@ -33,7 +45,7 @@ export function reducer(state: GameState, action: Action): GameState {
       return {
         ...state,
         players,
-        turnOrder: avoidMrWhiteFirst(players.map((p) => p.id), players),
+        turnOrder: makeTurnOrder(players.map((p) => p.id), players),
         civilWord: civil,
         undercoverWord: undercover,
         themeLabel,
@@ -101,14 +113,11 @@ export function reducer(state: GameState, action: Action): GameState {
     }
 
     case 'CONTINUE_ROUND': {
-      const aliveIds = new Set(state.players.filter((p) => p.alive).map((p) => p.id))
+      const aliveIds = state.players.filter((p) => p.alive).map((p) => p.id)
       return {
         ...state,
-        // après une élimination, Mr. White peut se retrouver en tête : on le redécale
-        turnOrder: avoidMrWhiteFirst(
-          state.turnOrder.filter((id) => aliveIds.has(id)),
-          state.players,
-        ),
+        // chaque manche repart sur un ordre entièrement retiré au sort
+        turnOrder: makeTurnOrder(aliveIds, state.players),
         roundNumber: state.roundNumber + 1,
         phase: 'discuss',
         lastElimination: null,
@@ -129,7 +138,7 @@ export function reducer(state: GameState, action: Action): GameState {
       return {
         ...state,
         players,
-        turnOrder: avoidMrWhiteFirst(players.map((p) => p.id), players),
+        turnOrder: makeTurnOrder(players.map((p) => p.id), players),
         civilWord: civil,
         undercoverWord: undercover,
         themeLabel,

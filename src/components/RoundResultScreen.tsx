@@ -16,6 +16,7 @@ const roleLabel: Record<string, string> = {
 
 export default function RoundResultScreen({ elimination, hasWinner, onContinue, onShowGameOver }: Props) {
   const [revealed, setRevealed] = useState(false)
+  const [wordShown, setWordShown] = useState(false)
   const { player, winner } = elimination
   const mrWhiteGuessedRight = player.role === 'mrwhite' && winner === 'mrwhite'
   const mrWhiteGuessedWrong = player.role === 'mrwhite' && winner !== 'mrwhite'
@@ -36,9 +37,19 @@ export default function RoundResultScreen({ elimination, hasWinner, onContinue, 
             {mrWhiteGuessedRight && <p style={{ marginTop: 14 }}>Et il a deviné le bon mot des civils !</p>}
             {mrWhiteGuessedWrong && <p style={{ marginTop: 14 }}>Il s'est trompé, ce n'était pas le bon mot.</p>}
             {player.role !== 'mrwhite' && player.word && (
-              <p style={{ marginTop: 14 }}>
-                Son mot était <strong style={{ color: 'var(--text)' }}>{player.word}</strong>
-              </p>
+              <div style={{ marginTop: 16 }}>
+                <p style={{ marginBottom: 8 }}>Son mot était</p>
+                <button
+                  className={`word-hidden ${wordShown ? 'shown' : ''}`}
+                  onClick={() => setWordShown(true)}
+                  aria-label={wordShown ? player.word : 'Appuie pour voir le mot'}
+                >
+                  {player.word}
+                </button>
+                {!wordShown && (
+                  <p style={{ marginTop: 8, fontSize: 13 }}>👆 Appuie pour découvrir le mot</p>
+                )}
+              </div>
             )}
           </>
         ) : (
