@@ -28,9 +28,8 @@ npm run build && npm run preview
   le faire remonter en tête de l'ordre de passage.
 - À l'élimination, le rôle du joueur reste **caché derrière un bouton** : on
   annonce qui sort, puis on révèle son camp quand tout le monde est prêt. Son
-  mot, lui, s'affiche **flouté** et ne se dévoile qu'au clic — l'afficher
-  directement donnerait le mot des civils aux infiltrés encore en jeu, ou
-  l'inverse.
+  mot n'est **jamais montré** — il resterait un indice pour les joueurs encore
+  en lice. Les deux mots ne sont dévoilés qu'à l'écran de fin de partie.
 - L'**ordre de passage est tiré au sort indépendamment** de l'ordre dans lequel
   les joueurs ont découvert leur mot, et il est **retiré à chaque manche**.
 - **Victoire des civils** : tous les Undercover et Mr. White sont éliminés.
