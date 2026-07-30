@@ -1,5 +1,5 @@
 import type { GameSettings, GameState, WordPack } from '../types'
-import { assignRoles, checkWinner, initialState, pickWordPair } from './logic'
+import { assignRoles, avoidMrWhiteFirst, checkWinner, initialState, pickWordPair } from './logic'
 
 export type Action =
   | { type: 'SET_PLAYER_NAMES'; names: string[] }
@@ -33,7 +33,7 @@ export function reducer(state: GameState, action: Action): GameState {
       return {
         ...state,
         players,
-        turnOrder: players.map((p) => p.id),
+        turnOrder: avoidMrWhiteFirst(players.map((p) => p.id), players),
         civilWord: civil,
         undercoverWord: undercover,
         themeLabel,
@@ -104,7 +104,11 @@ export function reducer(state: GameState, action: Action): GameState {
       const aliveIds = new Set(state.players.filter((p) => p.alive).map((p) => p.id))
       return {
         ...state,
-        turnOrder: state.turnOrder.filter((id) => aliveIds.has(id)),
+        // après une élimination, Mr. White peut se retrouver en tête : on le redécale
+        turnOrder: avoidMrWhiteFirst(
+          state.turnOrder.filter((id) => aliveIds.has(id)),
+          state.players,
+        ),
         roundNumber: state.roundNumber + 1,
         phase: 'discuss',
         lastElimination: null,
@@ -125,7 +129,7 @@ export function reducer(state: GameState, action: Action): GameState {
       return {
         ...state,
         players,
-        turnOrder: players.map((p) => p.id),
+        turnOrder: avoidMrWhiteFirst(players.map((p) => p.id), players),
         civilWord: civil,
         undercoverWord: undercover,
         themeLabel,

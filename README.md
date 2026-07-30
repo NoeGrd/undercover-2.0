@@ -22,7 +22,12 @@ npm run build && npm run preview
 - **Undercover** : reçoivent un mot proche mais différent.
 - **Mr. White** (optionnel) : ne reçoit aucun mot, doit bluffer. S'il est éliminé,
   il a une dernière chance de deviner le mot des civils — s'il trouve, il gagne
-  immédiatement (comparaison insensible à la casse et aux accents).
+  immédiatement (comparaison insensible à la casse et aux accents). Il ne prend
+  **jamais la parole en premier** : sans mot ni indice préalable, ce serait
+  injouable. La règle est réappliquée à chaque manche, car une élimination peut
+  le faire remonter en tête de l'ordre de passage.
+- À l'élimination, le rôle du joueur reste **caché derrière un bouton** : on
+  annonce qui sort, puis on révèle son camp quand tout le monde est prêt.
 - **Victoire des civils** : tous les Undercover et Mr. White sont éliminés.
 - **Victoire des infiltrés** : leur nombre devient supérieur ou égal à celui des civils.
 
@@ -43,14 +48,14 @@ La recherche automatique ne sert qu'aux thèmes perso.
 
 ### Couverture des thèmes intégrés
 
-| Thème | Mots illustrés |
-|---|---|
-| Classique | 20/20 |
-| Chanteurs | 19/19 |
-| Footballeurs | 18/18 |
-| Sportifs | 20/20 |
-| Perso d'animé | 6/20 |
-| Films & Séries | 10/20 |
+| Thème | Paires | Mots illustrés |
+|---|---|---|
+| Classique | 20 | 40/40 |
+| Chanteurs | 20 | 39/39 |
+| Footballeurs | 20 | 38/38 |
+| Sportifs | 20 | 40/40 |
+| Films & Séries | 20 | 30/40 |
+| Perso d'animé | 10 | 6/20 |
 
 Les personnages de fiction sont mal couverts parce que **l'API Wikipédia exclut
 délibérément les images non libres** : il n'existe donc pas de portrait de Naruto ou

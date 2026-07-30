@@ -48,6 +48,24 @@ export function assignRoles(names: string[], settings: GameSettings, civilWord: 
   })
 }
 
+/**
+ * Mr. White n'a aucun mot : s'il parle en premier, il doit inventer un indice
+ * sans la moindre information. On le décale donc systématiquement en 2e position
+ * (ou plus loin s'il y a plusieurs Mr. White).
+ */
+export function avoidMrWhiteFirst(order: string[], players: Player[]): string[] {
+  if (order.length < 2) return order
+  const roleById = new Map(players.map((p) => [p.id, p.role]))
+  if (roleById.get(order[0]) !== 'mrwhite') return order
+
+  const firstOther = order.findIndex((id) => roleById.get(id) !== 'mrwhite')
+  if (firstOther === -1) return order // que des Mr. White : rien à faire
+
+  const next = [...order]
+  ;[next[0], next[firstOther]] = [next[firstOther], next[0]]
+  return next
+}
+
 export function aliveByRole(players: Player[]) {
   const alive = players.filter((p) => p.alive)
   return {
