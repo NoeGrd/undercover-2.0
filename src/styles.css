@@ -306,6 +306,14 @@ p {
   width: 100%;
 }
 
+/** variante compacte, pour une action secondaire posée à côté d'un titre */
+.btn-inline {
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
 .card {
   background: var(--bg-elevated);
   border-radius: var(--radius);

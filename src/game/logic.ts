@@ -49,20 +49,36 @@ export function assignRoles(names: string[], settings: GameSettings, civilWord: 
 }
 
 /**
- * Mr. White n'a aucun mot : s'il parle en premier, il doit inventer un indice
- * sans la moindre information. On le décale donc systématiquement en 2e position
- * (ou plus loin s'il y a plusieurs Mr. White).
+ * Ordre de passage d'une manche : tirage indépendant de l'ordre de révélation.
+ *
+ * Deux contraintes sur celui qui ouvre :
+ * - ce n'est pas Mr. White, qui n'a aucun mot et devrait inventer un indice
+ *   sans la moindre information ;
+ * - ce n'est pas celui qui ouvrait la manche précédente, pour que la parole
+ *   tourne vraiment d'une manche à l'autre.
+ * La 1re contrainte prime : si aucun joueur ne coche les deux, on se contente
+ * d'écarter Mr. White.
  */
-export function avoidMrWhiteFirst(order: string[], players: Player[]): string[] {
+export function makeTurnOrder(
+  ids: string[],
+  players: Player[],
+  previousFirstId?: string | null,
+): string[] {
+  const order = shuffle(ids)
   if (order.length < 2) return order
-  const roleById = new Map(players.map((p) => [p.id, p.role]))
-  if (roleById.get(order[0]) !== 'mrwhite') return order
 
-  const firstOther = order.findIndex((id) => roleById.get(id) !== 'mrwhite')
-  if (firstOther === -1) return order // que des Mr. White : rien à faire
+  const roleById = new Map(players.map((p) => [p.id, p.role]))
+  const isMrWhite = (id: string) => roleById.get(id) === 'mrwhite'
+  const canOpen = (id: string) => !isMrWhite(id) && id !== previousFirstId
+
+  if (canOpen(order[0])) return order
+
+  const ideal = order.findIndex(canOpen)
+  const swapWith = ideal !== -1 ? ideal : order.findIndex((id) => !isMrWhite(id))
+  if (swapWith <= 0) return order // aucun remplaçant possible
 
   const next = [...order]
-  ;[next[0], next[firstOther]] = [next[firstOther], next[0]]
+  ;[next[0], next[swapWith]] = [next[swapWith], next[0]]
   return next
 }
 
@@ -76,11 +92,32 @@ export function aliveByRole(players: Player[]) {
   }
 }
 
+/**
+ * Undercover et Mr. White ne forment PAS une équipe : chacun joue pour son
+ * propre camp. Un camp ne l'emporte donc que s'il pèse, à lui seul, autant que
+ * tous les autres survivants réunis — éliminer un civil ne suffit plus à faire
+ * gagner un imposteur tant que l'autre imposteur est encore en jeu.
+ *
+ * Quand les deux camps remplissent la condition en même temps (il ne reste plus
+ * que des imposteurs, à égalité), personne n'a encore gagné : c'est le duel
+ * final, un dernier vote départage.
+ */
 export function checkWinner(players: Player[]): Winner | null {
   const { civils, undercover, mrwhite } = aliveByRole(players)
   if (undercover === 0 && mrwhite === 0) return 'civils'
-  if (undercover + mrwhite >= civils) return undercover > 0 ? 'undercover' : 'mrwhite'
+
+  const undercoverWins = undercover > 0 && undercover >= civils + mrwhite
+  const mrWhiteWins = mrwhite > 0 && mrwhite >= civils + undercover
+  if (undercoverWins && mrWhiteWins) return null
+  if (undercoverWins) return 'undercover'
+  if (mrWhiteWins) return 'mrwhite'
   return null
+}
+
+/** Plus aucun civil en vie, mais les deux camps d'imposteurs s'affrontent encore. */
+export function isFinalDuel(players: Player[]): boolean {
+  const { civils, undercover, mrwhite } = aliveByRole(players)
+  return civils === 0 && undercover > 0 && mrwhite > 0
 }
 
 export const MIN_PLAYERS = 3

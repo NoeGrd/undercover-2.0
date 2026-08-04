@@ -1,17 +1,5 @@
 import type { GameSettings, GameState, WordPack } from '../types'
-import {
-  assignRoles,
-  avoidMrWhiteFirst,
-  checkWinner,
-  initialState,
-  pickWordPair,
-  shuffle,
-} from './logic'
-
-/** Ordre de passage : tirage indépendant de l'ordre de révélation des mots. */
-function makeTurnOrder(ids: string[], players: GameState['players']): string[] {
-  return avoidMrWhiteFirst(shuffle(ids), players)
-}
+import { assignRoles, checkWinner, initialState, makeTurnOrder, pickWordPair } from './logic'
 
 export type Action =
   | { type: 'SET_PLAYER_NAMES'; names: string[] }
@@ -116,8 +104,9 @@ export function reducer(state: GameState, action: Action): GameState {
       const aliveIds = state.players.filter((p) => p.alive).map((p) => p.id)
       return {
         ...state,
-        // chaque manche repart sur un ordre entièrement retiré au sort
-        turnOrder: makeTurnOrder(aliveIds, state.players),
+        // chaque manche repart sur un ordre entièrement retiré au sort,
+        // sans redonner l'ouverture à celui qui parlait déjà en premier
+        turnOrder: makeTurnOrder(aliveIds, state.players, state.turnOrder[0]),
         roundNumber: state.roundNumber + 1,
         phase: 'discuss',
         lastElimination: null,

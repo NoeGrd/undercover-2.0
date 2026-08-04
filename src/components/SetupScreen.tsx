@@ -48,6 +48,12 @@ export default function SetupScreen({
     onSettingsChange({ themeIds: next })
   }
 
+  const allThemesSelected = packs.length > 0 && packs.every((p) => settings.themeIds.includes(p.id))
+
+  function toggleAllThemes() {
+    onSettingsChange({ themeIds: allThemesSelected ? [] : packs.map((p) => p.id) })
+  }
+
   return (
     <div className="screen screen--with-tabs">
       <div className="brand">
@@ -90,7 +96,13 @@ export default function SetupScreen({
       </div>
 
       <div className="card">
-        <h2 style={{ marginBottom: 14 }}>Thèmes</h2>
+        <div className="row" style={{ marginBottom: 14 }}>
+          <h2>Thèmes</h2>
+          {/* avec une vingtaine de thèmes, tout cocher à la main est vite pénible */}
+          <button className="btn btn-ghost btn-inline" onClick={toggleAllThemes}>
+            {allThemesSelected ? 'Tout décocher' : 'Tout cocher'}
+          </button>
+        </div>
         <div className="chip-grid">
           {packs.map((pack) => (
             <button

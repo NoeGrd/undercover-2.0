@@ -31,9 +31,19 @@ npm run build && npm run preview
   mot n'est **jamais montré** — il resterait un indice pour les joueurs encore
   en lice. Les deux mots ne sont dévoilés qu'à l'écran de fin de partie.
 - L'**ordre de passage est tiré au sort indépendamment** de l'ordre dans lequel
-  les joueurs ont découvert leur mot, et il est **retiré à chaque manche**.
+  les joueurs ont découvert leur mot, et il est **retiré à chaque manche**. Celui
+  qui a ouvert la manche précédente ne rouvre pas la suivante : la parole tourne.
+- **Undercover et Mr. White ne forment pas une équipe**, ils jouent chacun pour
+  soi. Un camp ne l'emporte que s'il pèse à lui seul autant que **tous** les
+  autres survivants réunis : à 3 civils / 1 Undercover / 1 Mr. White, éliminer un
+  civil ne fait donc gagner personne.
 - **Victoire des civils** : tous les Undercover et Mr. White sont éliminés.
-- **Victoire des infiltrés** : leur nombre devient supérieur ou égal à celui des civils.
+- **Victoire d'un imposteur** : son camp devient au moins aussi nombreux que tous
+  les autres joueurs en vie (civils + camp adverse), ou Mr. White devine le mot.
+- **Duel final** : s'il ne reste plus aucun civil et que les deux camps
+  d'imposteurs sont à égalité, la partie continue. Un dernier vote désigne le
+  perdant et le survivant remporte la partie — un Mr. White éliminé garde sa
+  chance de deviner le mot.
 
 Options réglables : nombre d'Undercover (borné à la moitié des joueurs), activation
 de Mr. White, affichage des images, sélection multiple de thèmes (3 à 20 joueurs).

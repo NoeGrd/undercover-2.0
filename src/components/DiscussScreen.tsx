@@ -1,4 +1,5 @@
 import type { Player } from '../types'
+import { isFinalDuel } from '../game/logic'
 
 interface Props {
   players: Player[]
@@ -10,13 +11,15 @@ interface Props {
 export default function DiscussScreen({ players, turnOrder, roundNumber, onStartVote }: Props) {
   const byId = new Map(players.map((p) => [p.id, p]))
   const ordered = turnOrder.map((id) => byId.get(id)).filter((p): p is Player => !!p)
+  const duel = isFinalDuel(players)
 
   return (
     <div className="screen">
-      <h1>Manche {roundNumber}</h1>
+      <h1>{duel ? 'Duel final' : `Manche ${roundNumber}`}</h1>
       <p>
-        Chacun donne, à tour de rôle, un indice sur son mot. Discutez, puis lancez le vote quand vous êtes prêts à
-        éliminer un suspect.
+        {duel
+          ? 'Plus aucun civil en vie : Undercover et Mr. White jouent chacun pour soi. Ce dernier vote désigne le perdant, le survivant remporte la partie.'
+          : 'Chacun donne, à tour de rôle, un indice sur son mot. Discutez, puis lancez le vote quand vous êtes prêts à éliminer un suspect.'}
       </p>
 
       <div className="card">
